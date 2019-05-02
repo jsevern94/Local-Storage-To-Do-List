@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+
+<head>
+
+  <meta charset="UTF-8">
+  <title>To Do App!</title>
+
+  <style>
+    #todo-item {
+      font-weight: 700;
+      font-size: 2em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Title -->
+  <h1>My To Do's!</h1>
+
+  <!-- Input Form -->
+  <form>
+    <span id="todo-item">To Do Item: <input id="to-do" type="text"><input id="add-to-do" value="Add Item"
+        type="submit"></span>
+  </form>
+
+  <hr>
+
+  <!-- To-Do List -->
+  <div id="to-dos"></div>
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- Script -->
+  <script>
+    $(document).ready(function () {
+      //create initial array
+      var toDoArray = []
+      //create function for putting items on screen
+      function updateScreen() {
+        $("#to-dos").empty();
+        $("#to-do").val("");
+        for (var i = 0; i < toDoArray.length; i++) {
+          var toDoItem = $("<p>")
+          toDoItem.text(toDoArray[i]);
+          var toDoClose = $("<button>");
+          toDoClose.attr("position", i);
+          toDoClose.addClass("checkbox");
+          toDoClose.text("✓");
+          toDoItem.prepend(toDoClose);
+          $("#to-dos").append(toDoItem);
+        };
+      }
+      //update array and run function if there is anything saved in local storage
+      if (localStorage.getItem("toDos")) {
+        var toDoArray = JSON.parse(localStorage.getItem("toDos"));
+        updateScreen();
+      }
+      //on click, pushes new item to array and runs function
+      $("#add-to-do").on("click", function (event) {
+        event.preventDefault();
+        var toDoTask = $("#to-do").val();
+        toDoArray.push(toDoTask);
+        localStorage.setItem("toDos", JSON.stringify(toDoArray));
+        updateScreen();
+      });
+      //When an item has been completed, it is removed from the array and function runs again
+      $(document.body).on("click", ".checkbox", function () {
+        //Get the number of the button from its position attribute and hold in a variable called  toDoNumber.
+        var toDoNumber = $(this).attr("position");
+        //remove item from array and update local storage
+        toDoArray.splice(toDoNumber, 1);
+        localStorage.setItem("toDos", JSON.stringify(toDoArray));
+        updateScreen();
+      });
+    });
+  </script>
+
+</body>
+
+</html>
